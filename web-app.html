@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <a href="index.html">Professional Pages</a>
+  <a href="scratch.html">Scratch Page</a>
+  <title>Memory Match Game</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f4f4f4;
+      text-align: center;
+      padding: 30px;
+    }
+    .game-container {
+      max-width: 600px;
+      margin: auto;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, 100px);
+      grid-gap: 10px;
+      justify-content: center;
+      margin-top: 20px;
+    }
+    .card {
+      width: 100px;
+      height: 100px;
+      background-color: #ffffff;
+      border: 2px solid #ccc;
+      font-size: 40px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+    }
+    .matched {
+      background-color: #c8e6c9;
+      cursor: default;
+    }
+  </style>
+</head>
+<body>
+  <div class="game-container">
+    <h1>Memory Match Game 🧠</h1>
+    <p>Click on cards to find matching pairs!</p>
+    <div class="grid" id="grid"></div>
+  </div>
+
+  <script>
+    const emojis = ['🍎','🍌','🍒','🍇','🍉','🍋','🍓','🥝'];
+    let cards = [...emojis, ...emojis];
+    let firstCard = null;
+    let secondCard = null;
+    let lockBoard = false;
+
+    // Shuffle cards
+    cards.sort(() => 0.5 - Math.random());
+
+    const grid = document.getElementById('grid');
+    cards.forEach((emoji, index) => {
+      const card = document.createElement('div');
+      card.classList.add('card');
+      card.dataset.emoji = emoji;
+      card.dataset.index = index;
+      card.innerText = '';
+      card.addEventListener('click', handleCardClick);
+      grid.appendChild(card);
+    });
+
+    function handleCardClick(e) {
+      const card = e.currentTarget;
+      if (lockBoard || card.classList.contains('matched') || card === firstCard) return;
+
+      card.innerText = card.dataset.emoji;
+
+      if (!firstCard) {
+        firstCard = card;
+      } else {
+        secondCard = card;
+        lockBoard = true;
+
+        if (firstCard.dataset.emoji === secondCard.dataset.emoji) {
+          firstCard.classList.add('matched');
+          secondCard.classList.add('matched');
+          resetTurn();
+        } else {
+          setTimeout(() => {
+            firstCard.innerText = '';
+            secondCard.innerText = '';
+            resetTurn();
+          }, 800);
+        }
+      }
+    }
+
+    function resetTurn() {
+      [firstCard, secondCard] = [null, null];
+      lockBoard = false;
+    }
+  </script>
+</body>
+</html>
